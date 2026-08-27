@@ -1,0 +1,7 @@
+{
+  "skills": [
+    { "name": "email-triage",    "description": "Multi-step inbox triage: classify, label, draft replies in priority order.", "file": "email-triage.md" },
+    { "name": "linear-planning", "description": "Break a goal into Linear issues with titles, estimates, and dependencies.", "file": "linear-planning.md" },
+    { "name": "research-deep",   "description": "Structured multi-source research with source ranking and a written brief.", "file": "research-deep.md" }
+  ]
+}
