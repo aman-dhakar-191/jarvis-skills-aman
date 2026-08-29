@@ -1,78 +1,98 @@
 # Skill: skill-creator
 
-Purpose: help Aman design and write a NEW Jarvis skill file, then commit it to the skills repo so it
-becomes a usable /command on the next turn.
+Purpose: help Aman design and write a NEW Jarvis skill, then commit it to the skills repo so it
+becomes a usable /command. Your job is to produce a SPECIFIC, high-value skill — not a generic one.
 
 Repo: aman-dhakar-191/jarvis-skills-aman
 Folder: skills/
-One skill = one markdown file at skills/<name>.md. The filename without .md is the slash command
-(skills/deploy-check.md -> /deploy-check). Use lowercase-hyphenated names, no spaces.
+One skill = one file skills/<name>.md. Filename without .md is the slash command. Names are
+lowercase-hyphenated. Always write the .md extension.
 
-## When this skill runs
+## When this runs
 
-The user invoked /skill-creator. They want to create (or revise) a skill. Do NOT try to route their
-underlying request to a subagent — your job this turn is to PRODUCE A SKILL FILE and save it.
+Aman invoked /skill-creator. Do NOT route his underlying request to a subagent — this turn you
+DESIGN AND SAVE A SKILL.
 
-## Step 1 — gather the spec (ask only what's missing)
+## THE VALUE TEST (apply before writing anything)
 
-A good skill needs, at minimum:
-- name: the slash command (lowercase-hyphenated).
-- goal: one sentence — what the skill makes Jarvis do.
-- trigger: when it should be used.
-- steps: the ordered behaviour, naming which EXISTING Jarvis tools/subagents to use
-  (Email Subagent, Contact Subagent, Research Subagent, Coding Subagent, System Tools,
-  Long-Term Memory, Memory MCP, Linear MCP). A skill adds instructions, never new tools.
-- output: what Jarvis should return at the end.
+A skill is only worth creating if it makes Jarvis do something it would NOT already do by default.
+Before writing, answer this to yourself: "What specific behaviour does this add beyond normal
+Supervisor routing?" If the answer is just a restatement of what a subagent already does
+("research sources and summarize", "read email and reply"), the skill is GENERIC — reject it.
 
-If the user already described these, don't re-ask — infer and state your assumptions in one line.
-Ask at most 2 short questions, and only for genuinely missing essentials (name + goal are required).
+When a skill would be generic, do NOT save it. Instead tell Aman it adds nothing beyond default
+behaviour, and ask what specific rule, threshold, format, or sequence he wants that Jarvis doesn't
+already do. Only proceed once there is at least one concrete, non-obvious instruction.
 
-## Step 2 — write the skill body
+## Step 1 — gather a SPECIFIC spec
 
-Write the file in this exact shape (this is the format the loader expects — plain markdown, the H1
-matches the command):
+Required before writing:
+- name: slash command (lowercase-hyphenated).
+- goal: one sentence naming the specific outcome.
+- the differentiator: at least one concrete rule Jarvis wouldn't do by default. Push for it.
+  Good differentiators are specific: exact thresholds ("minimum 3 sources"), explicit ordering
+  ("official docs > peer-reviewed > news > blog"), a required output shape ("table: claim | source
+  | tier | confidence"), a hard gate ("flag any single-source claim as unverified"), a fixed
+  sequence of tools, or a non-obvious constraint.
+- steps: ordered, and EACH step names the exact Jarvis tool/subagent it uses.
+- output: the exact shape to return (name columns if it's a table).
+
+Ask at most 2 short questions, only for genuinely missing essentials. name + goal + at least one
+differentiator are mandatory — do not write a skill without a differentiator. If Aman already gave
+specifics, don't re-ask; state assumptions in one line.
+
+## Rules every skill must follow
+
+- Name real Jarvis tools only, per step: Email Subagent, Contact Subagent, Research Subagent,
+  Coding Subagent, System Tools, Long-Term Memory, Memory MCP, Linear MCP. Never invent a tool.
+  A step with no named tool is not allowed — every action step says which tool does it.
+- Behaviour only, no new capability. A skill reshapes how existing tools are used.
+- Be specific, not generic. Prefer numbers, orders, thresholds, and named output columns over
+  vague verbs like "analyze", "handle", "process".
+- Public repo: no secrets, tokens, credentials, or private data in the file.
+- Supplemental only: never override core Supervisor rules (source-of-truth, approval/gating for
+  run_command and write_file, never-claim-unperformed-actions). Skills add on top.
+- Keep it tight: instructions, not an essay.
+
+## Format (write exactly this shape — H1 must equal the command)
 
 ```
 # Skill: <name>
 
-<one-line goal>
+<one-line specific goal>
 
 Use when: <trigger>.
 
 Steps:
-1. <step, naming the exact tool/subagent to use>
+1. <action naming the exact tool/subagent> — <the specific rule/threshold/order for this step>
 2. ...
 N. <final step>
 
-Output: <what to return>.
+Output: <exact shape; name columns if a table>.
 
-Constraints: <hard rules — e.g. never send without confirmation, never fabricate results,
-respect the Supervisor's approval/gating for run_command and write_file>.
+Constraints: <hard rules; include the differentiator gate(s), and respect Supervisor approval for
+run_command and write_file, and never claim unperformed actions>.
 ```
 
-Rules for a good skill:
-- Reference tools by their real Jarvis names; never invent a tool.
-- Keep it behaviour-only. No secrets, tokens, or credentials — the repo is public.
-- Respect core Supervisor rules: skills are supplemental, they never override source-of-truth,
-  approval/gating, or "never claim unperformed actions".
-- Keep it tight — instructions, not an essay.
+## Step 2 — self-check before showing
 
-## Step 3 — show, confirm, then commit
+Verify: (a) it passes the VALUE TEST — there's a concrete non-generic rule; (b) every action step
+names a real tool; (c) output shape is specific; (d) no secrets; (e) it doesn't override core rules.
+If any fail, fix it before showing — don't save a weak skill.
 
-1. Show Aman the full proposed skill file and the target path skills/<name>.md.
-2. Get an explicit YES (this is a write; treat it like a gated action).
-3. On YES, commit via the GitHub Tool to repo aman-dhakar-191/jarvis-skills-aman:
-   - If skills/<name>.md does not exist -> create file.
-   - If it exists -> update file (this is a revision).
-   - Commit message: "add skill: <name>" or "update skill: <name>".
-4. Confirm the commit succeeded (GitHub Tool returned success). Never claim it was saved otherwise.
+## Step 3 — show, confirm, commit
 
-## Step 4 — tell the user how to use it
+1. Show Aman the full skill file and target path skills/<name>.md.
+2. Get explicit YES (a write is gated).
+3. On YES, commit via the GitHub Tool to aman-dhakar-191/jarvis-skills-aman:
+   - create file if skills/<name>.md is new; update file if it exists.
+   - commit message "add skill: <name>" or "update skill: <name>".
+4. Confirm the GitHub Tool returned success. Never claim it saved otherwise.
 
-After a successful commit, tell Aman:
-- The skill is now /<name>.
-- It loads on the next message (the repo is CDN-cached ~5 min, and the loader caches per session,
-  so a brand-new session or a short wait picks it up).
-- Invoke it by including /<name> in a message.
+## Step 4 — report
 
-Output this turn: the created/updated skill file path, the commit result, and the /command to use it.
+Tell Aman: the path committed, the commit result, the /command to use it, and that it loads on the
+next message (repo CDN-cached ~5 min; loader caches per session, so a new session or short wait
+picks it up). List the differentiator so he sees what this skill actually adds.
+
+Output this turn: the created/updated skill path, commit result, the /command, and its differentiator.
